@@ -31,7 +31,6 @@ const waitForEventMatching = (socket, eventName, predicate, timeoutMs = 3000) =>
   });
 };
 
-
 const signTestToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,

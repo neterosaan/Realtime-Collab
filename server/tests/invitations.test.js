@@ -1,4 +1,4 @@
-import {describe, it, expect, beforeAll, beforeEach, afterAll} from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, afterAll } from 'vitest';
 import request from 'supertest';
 const app = require('../app');
 const connectToMongoDB = require('../db/mongo');
@@ -91,12 +91,16 @@ describe('Invitations', () => {
       const { inviteeToken, invitationId } = await setupPendingInvitation();
 
       const results = await Promise.allSettled([
-        request(app).post(`/api/invitations/${invitationId}/accept`).set('Authorization', `Bearer ${inviteeToken}`),
-        request(app).post(`/api/invitations/${invitationId}/accept`).set('Authorization', `Bearer ${inviteeToken}`),
+        request(app)
+          .post(`/api/invitations/${invitationId}/accept`)
+          .set('Authorization', `Bearer ${inviteeToken}`),
+        request(app)
+          .post(`/api/invitations/${invitationId}/accept`)
+          .set('Authorization', `Bearer ${inviteeToken}`),
       ]);
 
       const statuses = results.map((r) => r.value.status).sort();
-      expect(statuses).toEqual([200, 404]);  
+      expect(statuses).toEqual([200, 404]);
 
       const pool = await getMysqlPool();
       const [rows] = await pool.query(
@@ -109,7 +113,10 @@ describe('Invitations', () => {
 
     it('rejects accepting an invitation that does not belong to you', async () => {
       const { invitationId } = await setupPendingInvitation();
-      const { token: strangerToken } = await registerUser('inv-stranger1', 'inv-stranger1@test.com');
+      const { token: strangerToken } = await registerUser(
+        'inv-stranger1',
+        'inv-stranger1@test.com'
+      );
 
       const res = await request(app)
         .post(`/api/invitations/${invitationId}/accept`)
@@ -147,7 +154,6 @@ describe('Invitations', () => {
     });
 
     it('returns a clean 404 (not a 500 crash) when declining an invitation that does not exist', async () => {
-
       const { token } = await registerUser('inv-user4', 'inv-user4@test.com');
 
       const res = await request(app)

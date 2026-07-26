@@ -1,12 +1,10 @@
-const express= require('express');
-const documentController = require('../controllers/documentController')
-const authController= require('../controllers/authController')
+const express = require('express');
+const documentController = require('../controllers/documentController');
+const authController = require('../controllers/authController');
 
-const router= express.Router();
+const router = express.Router();
 
-
-router.use(authController.protect)
-
+router.use(authController.protect);
 
 /**
  * @swagger
@@ -31,11 +29,7 @@ router.use(authController.protect)
  *       200:
  *         description: List of documents
  */
-router
- .route('/')
-  .get(documentController.getAllDocuments)
-  .post(documentController.createDocument);
-
+router.route('/').get(documentController.getAllDocuments).post(documentController.createDocument);
 
 /**
  * @swagger
@@ -89,10 +83,9 @@ router
  */
 router
   .route('/:id')
-  .get(  documentController.getDocument)
-  .patch(  authController.isOwner,documentController.updateDocument)
-  .delete(  authController.isOwner,documentController.deleteDocument);
-
+  .get(documentController.getDocument)
+  .patch(authController.isOwner, documentController.updateDocument)
+  .delete(authController.isOwner, documentController.deleteDocument);
 
 /**
  * @swagger
@@ -123,11 +116,7 @@ router
  *       404:
  *         description: No user found with that email
  */
-router.route('/:id/share').post(
-  authController.isOwner, 
-  documentController.shareDocument
-);
-
+router.route('/:id/share').post(authController.isOwner, documentController.shareDocument);
 
 /**
  * @swagger
@@ -172,17 +161,12 @@ router.route('/:id/share').post(
  *       404:
  *         description: That user has no access to remove
  */
-router.route('/:id/permissions').get(
-  authController.isOwner, 
-  documentController.getPermissions
-)
-  .delete( 
-    authController.isOwner, 
-    documentController.removePermission
-  );
+router
+  .route('/:id/permissions')
+  .get(authController.isOwner, documentController.getPermissions)
+  .delete(authController.isOwner, documentController.removePermission);
 
-
-  /**
+/**
  * @swagger
  * /documents/{id}/public:
  *   put:
@@ -210,10 +194,7 @@ router.route('/:id/permissions').get(
  *       403:
  *         description: You are not the owner of this document
  */
-  router.route('/:id/public').put(
-  authController.isOwner, 
-  documentController.setPublicStatus
-);
+router.route('/:id/public').put(authController.isOwner, documentController.setPublicStatus);
 
 /**
  * @swagger
@@ -235,9 +216,6 @@ router.route('/:id/permissions').get(
  *       404:
  *         description: Document not found, or not public and you have no existing access
  */
-router.route('/:id/view').get(
-  documentController.viewPublicDocument
-);
-
+router.route('/:id/view').get(documentController.viewPublicDocument);
 
 module.exports = router;

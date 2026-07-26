@@ -5,6 +5,6 @@ module.exports = defineConfig({
     environment: 'node',
     globals: false,
     testTimeout: 15000,
-    fileParallelism: false, 
+    fileParallelism: false,
   },
 });

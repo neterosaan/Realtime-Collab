@@ -3,8 +3,6 @@ const db = require('../db/mysql');
 const AppError = require('../utils/appError');
 const DocumentContent = require('./documentContentModel');
 
-
-
 exports.create = async (title, ownerId) => {
   const newDocumentId = uuidv4();
   const documentData = {
@@ -13,7 +11,7 @@ exports.create = async (title, ownerId) => {
     owner_id: ownerId,
   };
 
-  const ownerRoleId = 1; 
+  const ownerRoleId = 1;
 
   const connection = await db.getConnection();
   try {
@@ -26,7 +24,7 @@ exports.create = async (title, ownerId) => {
       [ownerId, newDocumentId, ownerRoleId]
     );
 
-    await DocumentContent.create({_id: newDocumentId, content:''})
+    await DocumentContent.create({ _id: newDocumentId, content: '' });
 
     await connection.commit();
 
@@ -37,13 +35,12 @@ exports.create = async (title, ownerId) => {
     };
   } catch (error) {
     await connection.rollback();
-    console.error('Failed to create document:', error); 
+    console.error('Failed to create document:', error);
     throw new AppError('Failed to create document in database.', 500);
   } finally {
     connection.release();
   }
 };
-
 
 exports.findAllForUser = async (userId) => {
   const [rows] = await db.execute(
@@ -55,7 +52,6 @@ exports.findAllForUser = async (userId) => {
   );
   return rows;
 };
-
 
 exports.findById = async (documentId, userId) => {
   const sql = `
@@ -71,7 +67,6 @@ exports.findById = async (documentId, userId) => {
   return rows[0] || null;
 };
 
-
 exports.updateTitle = async (documentId, title) => {
   const [result] = await db.execute(
     'UPDATE documents SET title = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
@@ -80,19 +75,13 @@ exports.updateTitle = async (documentId, title) => {
   return result;
 };
 
-
 exports.remove = async (documentId) => {
-  const [result] = await db.execute('DELETE FROM documents WHERE id = ?', [
-    documentId,
-  ]);
+  const [result] = await db.execute('DELETE FROM documents WHERE id = ?', [documentId]);
   return result;
 };
 
-
 exports.findOwner = async (documentId) => {
-  const [rows] = await db.execute('SELECT owner_id FROM documents WHERE id = ?', [
-    documentId,
-  ]);
+  const [rows] = await db.execute('SELECT owner_id FROM documents WHERE id = ?', [documentId]);
   return rows[0] ? rows[0].owner_id : null;
 };
 
@@ -103,11 +92,11 @@ exports.addPermission = async (documentId, userId, roleId) => {
   );
 
   if (existing.length > 0) {
-
-    throw new AppError('This user already has access to the document.', 409); 
+    throw new AppError('This user already has access to the document.', 409);
   }
 
-  const sql = 'INSERT INTO user_document_permissions (document_id, user_id, role_id) VALUES (?, ?, ?)';
+  const sql =
+    'INSERT INTO user_document_permissions (document_id, user_id, role_id) VALUES (?, ?, ?)';
   const [result] = await db.execute(sql, [documentId, userId, roleId]);
 
   return {
@@ -117,7 +106,6 @@ exports.addPermission = async (documentId, userId, roleId) => {
     roleId,
   };
 };
-
 
 exports.getPermissions = async (documentId) => {
   const sql = `
@@ -138,11 +126,10 @@ exports.removePermission = async (documentId, userIdToRemove) => {
   return result;
 };
 
-
 exports.getUserRole = async (documentId, userId) => {
   const ownerId = await this.findOwner(documentId);
   if (ownerId === userId) {
-    return { name: 'owner' }; 
+    return { name: 'owner' };
   }
 
   const sql = `
@@ -153,9 +140,8 @@ exports.getUserRole = async (documentId, userId) => {
   `;
   const [rows] = await db.execute(sql, [documentId, userId]);
 
-  return rows[0] || null; 
+  return rows[0] || null;
 };
-
 
 exports.setPublicStatus = async (documentId, isPublic) => {
   const sql = 'UPDATE documents SET is_public = ? WHERE id = ?';
@@ -164,14 +150,12 @@ exports.setPublicStatus = async (documentId, isPublic) => {
   return result;
 };
 
-
 exports.isPublic = async (documentId) => {
   const sql = 'SELECT is_public FROM documents WHERE id = ?';
   const [rows] = await db.execute(sql, [documentId]);
-  
+
   return rows[0] ? !!rows[0].is_public : false;
 };
-
 
 exports.createInvitation = async (documentId, inviterId, inviteeId, roleId) => {
   const sql = `
@@ -188,7 +172,7 @@ exports.createInvitation = async (documentId, inviterId, inviteeId, roleId) => {
     };
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
-      throw new AppError('An invitation for this user on this document already exists.', 409); 
+      throw new AppError('An invitation for this user on this document already exists.', 409);
     }
     throw error;
   }
@@ -207,13 +191,10 @@ exports.getInvitationsForUser = async (userId) => {
   return invitations;
 };
 
-
-
 exports.acceptInvitation = async (invitationId, userId) => {
   const connection = await db.getConnection();
   try {
     await connection.beginTransaction();
-
 
     const [invites] = await connection.execute(
       'SELECT * FROM document_invitations WHERE id = ? AND invitee_id = ? AND status = "pending" FOR UPDATE',
@@ -222,7 +203,10 @@ exports.acceptInvitation = async (invitationId, userId) => {
     const invitation = invites[0];
 
     if (!invitation) {
-      throw new AppError('Invitation not found, already acted upon, or you are not the invitee.', 404);
+      throw new AppError(
+        'Invitation not found, already acted upon, or you are not the invitee.',
+        404
+      );
     }
 
     await connection.execute(
@@ -230,10 +214,9 @@ exports.acceptInvitation = async (invitationId, userId) => {
       [invitation.document_id, invitation.invitee_id, invitation.role_id]
     );
 
-    await connection.execute(
-      'UPDATE document_invitations SET status = "accepted" WHERE id = ?',
-      [invitationId]
-    );
+    await connection.execute('UPDATE document_invitations SET status = "accepted" WHERE id = ?', [
+      invitationId,
+    ]);
 
     await connection.commit();
     return invitation;
@@ -242,15 +225,13 @@ exports.acceptInvitation = async (invitationId, userId) => {
     if (error.code === 'ER_DUP_ENTRY') {
       throw new AppError('You already have permission for this document.', 409);
     }
-    throw error; 
+    throw error;
   } finally {
     connection.release();
   }
 };
 
-
 exports.declineInvitation = async (invitationId, userId) => {
-
   const sql = `
     UPDATE document_invitations
     SET status = 'declined'
@@ -258,7 +239,6 @@ exports.declineInvitation = async (invitationId, userId) => {
   `;
 
   const [result] = await db.execute(sql, [invitationId, userId]);
-
 
   return result;
 };

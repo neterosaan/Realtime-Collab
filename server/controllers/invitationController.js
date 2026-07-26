@@ -28,8 +28,6 @@ exports.acceptInvitation = catchAsync(async (req, res, next) => {
   });
 });
 
-
-
 exports.declineInvitation = catchAsync(async (req, res, next) => {
   const invitationId = req.params.id;
   const userId = req.user.id;
@@ -37,7 +35,9 @@ exports.declineInvitation = catchAsync(async (req, res, next) => {
   const result = await documentModel.declineInvitation(invitationId, userId);
 
   if (result.affectedRows === 0) {
-    return next(new AppError('Invitation not found, already acted upon, or you are not the invitee.', 404));
+    return next(
+      new AppError('Invitation not found, already acted upon, or you are not the invitee.', 404)
+    );
   }
 
   res.status(200).json({

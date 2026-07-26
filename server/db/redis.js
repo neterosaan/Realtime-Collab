@@ -1,14 +1,13 @@
 const { createClient } = require('redis');
 
-let redisClient
+let redisClient;
 
 async function connectToRedis() {
-
-    if (redisClient) {
-    return; 
+  if (redisClient) {
+    return;
   }
- redisClient = createClient({
-    url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
+  redisClient = createClient({
+    url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
   });
   redisClient.on('error', (err) => console.error('❌ Redis Client Error', err));
   redisClient.on('connect', () => console.log('✅ Redis client is connecting...'));
@@ -18,12 +17,12 @@ async function connectToRedis() {
     await redisClient.connect();
     console.log('✅ Successfully connected to Redis.');
     return redisClient;
-  }  catch (error) {
+  } catch (error) {
     console.error('❌ Could not connect to Redis:', error);
     if (process.env.NODE_ENV !== 'test') {
-        process.exit(1);
+      process.exit(1);
     }
-}
+  }
 }
 
 function getRedisClient() {

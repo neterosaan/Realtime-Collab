@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterAll }  from 'vitest';
+import { describe, it, expect, beforeEach, afterAll } from 'vitest';
 import request from 'supertest';
 const app = require('../app');
 const { resetAll, disconnectAll, getMysqlPool } = require('./setup/testDb');
@@ -21,7 +21,7 @@ describe('Auth', () => {
       expect(res.status).toBe(201);
       expect(res.body.accessToken).toBeDefined();
       expect(res.body.data.user.email).toBe('alice@test.com');
-      expect(res.body.data.user.password_hash).toBeUndefined(); 
+      expect(res.body.data.user.password_hash).toBeUndefined();
     });
 
     it('sets an httpOnly refresh token cookie', async () => {

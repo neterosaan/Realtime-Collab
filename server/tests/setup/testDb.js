@@ -50,7 +50,6 @@ const getRedisClient = async () => {
   return redisClient;
 };
 
-
 const resetMysql = async () => {
   const pool = await getMysqlPool();
   const [tables] = await pool.query(

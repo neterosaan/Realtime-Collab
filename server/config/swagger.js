@@ -6,11 +6,10 @@ const options = {
     info: {
       title: 'Real-Time Collab API',
       version: '1.0.0',
-      description: 'Backend for a real-time collaborative document editor -- MySQL, MongoDB, and Redis, with Socket.io for live collaboration, presence, and chat.',
+      description:
+        'Backend for a real-time collaborative document editor -- MySQL, MongoDB, and Redis, with Socket.io for live collaboration, presence, and chat.',
     },
-    servers: [
-      { url: 'http://localhost:4000/api', description: 'Local (Docker Compose)' },
-    ],
+    servers: [{ url: 'http://localhost:4000/api', description: 'Local (Docker Compose)' }],
     components: {
       securitySchemes: {
         bearerAuth: {

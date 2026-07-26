@@ -23,8 +23,8 @@ async function startServer() {
   await connectToRedis();
 
   server.on('request', (req, res) => {
-  console.log('🔥 REQUEST RECEIVED:', req.method, req.url);
-});
+    console.log('🔥 REQUEST RECEIVED:', req.method, req.url);
+  });
   server.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
   });

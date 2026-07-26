@@ -18,7 +18,6 @@ router.use(authController.protect);
  */
 router.route('/').get(invitationController.getMyInvitations);
 
-
 /**
  * @swagger
  * /invitations/{id}/accept:

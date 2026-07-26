@@ -1,5 +1,11 @@
 import { describe, it, expect, beforeEach, afterAll } from 'vitest';
-const { resetAll, disconnectAll, getMysqlPool, getRedisClient, getMongoConnection } = require('./setup/testDb');
+const {
+  resetAll,
+  disconnectAll,
+  getMysqlPool,
+  getRedisClient,
+  getMongoConnection,
+} = require('./setup/testDb');
 
 describe('test harness', () => {
   beforeEach(async () => {
@@ -12,15 +18,17 @@ describe('test harness', () => {
 
   it('can write to and read from the real test MySQL database', async () => {
     const pool = await getMysqlPool();
-    await pool.query(
-      'INSERT INTO users (id, username, email, password_hash) VALUES (?, ?, ?, ?)',
-      ['test-id-1', 'harness', 'harness@test.com', 'hashed']
-    );
+    await pool.query('INSERT INTO users (id, username, email, password_hash) VALUES (?, ?, ?, ?)', [
+      'test-id-1',
+      'harness',
+      'harness@test.com',
+      'hashed',
+    ]);
     const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', ['test-id-1']);
     expect(rows).toHaveLength(1);
   });
 
-  it('resetAll actually wiped the previous test\'s MySQL row', async () => {
+  it("resetAll actually wiped the previous test's MySQL row", async () => {
     const pool = await getMysqlPool();
     const [rows] = await pool.query('SELECT * FROM users');
     expect(rows).toHaveLength(0);
@@ -33,7 +41,7 @@ describe('test harness', () => {
     expect(value).toBe('harness-value');
   });
 
-  it('resetAll actually wiped the previous test\'s Redis key', async () => {
+  it("resetAll actually wiped the previous test's Redis key", async () => {
     const client = await getRedisClient();
     const value = await client.get('harness-key');
     expect(value).toBeNull();

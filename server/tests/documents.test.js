@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterAll, beforeAll }  from 'vitest';
+import { describe, it, expect, beforeEach, afterAll, beforeAll } from 'vitest';
 const connectToMongoDB = require('../db/mongo');
 import request from 'supertest';
 const app = require('../app');
-const { resetAll, disconnectAll, getMysqlPool,seedRoles } = require('./setup/testDb');
+const { resetAll, disconnectAll, getMysqlPool, seedRoles } = require('./setup/testDb');
 
 const registerUser = async (username, email) => {
   const res = await request(app)
@@ -12,10 +12,9 @@ const registerUser = async (username, email) => {
 };
 
 describe('Documents', () => {
-
   beforeAll(async () => {
     await connectToMongoDB();
-    });
+  });
   beforeEach(async () => {
     await resetAll();
     await seedRoles();
@@ -191,7 +190,7 @@ describe('Documents', () => {
         .get(`/api/documents/${documentId}/view`)
         .set('Authorization', `Bearer ${viewerToken}`);
 
-      expect(res.status).toBe(201); 
+      expect(res.status).toBe(201);
 
       const followUp = await request(app)
         .get(`/api/documents/${documentId}`)

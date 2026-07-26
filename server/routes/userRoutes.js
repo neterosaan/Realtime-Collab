@@ -1,8 +1,8 @@
-const express= require('express');
-const authController = require('../controllers/authController')
-const rateLimit = require('express-rate-limit'); 
+const express = require('express');
+const authController = require('../controllers/authController');
+const rateLimit = require('express-rate-limit');
 
-const router= express.Router();
+const router = express.Router();
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -10,7 +10,6 @@ const authLimiter = rateLimit({
   message: 'Too many authentication attempts from this IP, please try again after 15 minutes.',
   skip: () => process.env.NODE_ENV === 'test',
 });
-
 
 /**
  * @swagger
@@ -38,7 +37,7 @@ const authLimiter = rateLimit({
  *       409:
  *         description: Email already registered
  */
-router.post('/register', authLimiter,authController.register)
+router.post('/register', authLimiter, authController.register);
 
 /**
  * @swagger
@@ -63,7 +62,7 @@ router.post('/register', authLimiter,authController.register)
  *       401:
  *         description: Invalid email or password (generic message either way -- no user enumeration)
  */
-router.post('/login',authLimiter,authController.login)
+router.post('/login', authLimiter, authController.login);
 
 /**
  * @swagger
@@ -77,7 +76,7 @@ router.post('/login',authLimiter,authController.login)
  *       401:
  *         description: Missing, invalid, or expired token
  */
-router.get('/me',authController.protect,authController.getMe)
+router.get('/me', authController.protect, authController.getMe);
 
 /**
  * @swagger
@@ -95,4 +94,4 @@ router.get('/me',authController.protect,authController.getMe)
  */
 router.post('/refresh', authController.refreshToken);
 
-module.exports=router
+module.exports = router;
