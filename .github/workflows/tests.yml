@@ -29,6 +29,9 @@ jobs:
 
       mongo:
         image: mongo:latest
+        env:
+          MONGO_INITDB_ROOT_USERNAME: testuser
+          MONGO_INITDB_ROOT_PASSWORD: testpass
         ports:
           - 27017:27017
 
