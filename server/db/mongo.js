@@ -9,7 +9,9 @@ async function connectToMongoDB() {
     console.log('✅ Successfully connected to MongoDB.');
   } catch (error) {
     console.error('❌ Could not connect to MongoDB:', error);
-    process.exit(1);
+    if (process.env.NODE_ENV !== 'test') {
+        process.exit(1);
+    }
   }
 }
 
