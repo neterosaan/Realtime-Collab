@@ -1,0 +1,27 @@
+services:
+  mysql-test:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: testpass
+      MYSQL_DATABASE: collab_platform
+    ports:
+      - "3308:3306"
+    tmpfs:
+      - /var/lib/mysql
+
+  mongo-test:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: testuser
+      MONGO_INITDB_ROOT_PASSWORD: testpass
+    ports:
+      - "27018:27017"
+    tmpfs:
+      - /data/db
+
+  redis-test:
+    image: redis:alpine
+    ports:
+      - "6380:6379"
+    tmpfs:
+      - /data
