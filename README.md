@@ -113,7 +113,7 @@ Postman's WebSocket/Socket.io requests currently **cannot be exported as a colle
 **Requirements:** Docker and Docker Compose.
 
 ```bash
-git clone https://github.com/neterosaan/Realtime-Collab.git
+git clone https://github.com/Ahmed-Amer02/Realtime-Collab.git
 cd Realtime-Collab
 ```
 
